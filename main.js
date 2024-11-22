@@ -20,7 +20,6 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
 const outlineMaterial = new THREE.ShaderMaterial({
   uniforms: {
     thickness: {
@@ -40,17 +39,35 @@ const cube = new THREE.Mesh(cubeGeometry, outlineMaterial);
 scene.add(cube);
 
 const gui = new GUI();
+const cameraUI = gui.addFolder("Camera");
 const cubeUI = gui.addFolder("Cube");
 
 const guiProperties = {
+  camera: {
+    focalLength: camera.getFocalLength()
+  },
   cube: {
     rotation: {
       x: 0,
       y: 0,
       z: 0
+    },
+    size: {
+      width: 1,
+      height: 1,
+      depth: 1
     }
   }
 }
+
+cameraUI.add(guiProperties.camera, 'focalLength')
+  .min(0)
+  .max(40)
+  .step(0.1)
+  .onChange(() => {
+    camera.setFocalLength(guiProperties.camera.focalLength);
+    camera.updateProjectionMatrix();
+  })
 
 const cubeRotationUI = cubeUI.addFolder("Rotation");
 cubeRotationUI.add(guiProperties.cube.rotation, 'x')
@@ -76,6 +93,35 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'z')
   .onChange(() => {
     cube.rotation.reorder('XYZ');
     cube.rotation.z = rads(guiProperties.cube.rotation.z)
+  });
+
+const cubeSizeUI = cubeUI.addFolder('Size');
+cubeSizeUI.add(guiProperties.cube.size, 'width')
+  .min(0.1)
+  .max(5)
+  .step(0.1)
+  .onChange(() => {
+    const s = guiProperties.cube.size;
+    cube.geometry.dispose();
+    cube.geometry = new THREE.BoxGeometry(s.width, s.height, s.depth);
+  });
+cubeSizeUI.add(guiProperties.cube.size, 'height')
+  .min(0.1)
+  .max(5)
+  .step(0.1)
+  .onChange(() => {
+    const s = guiProperties.cube.size;
+    cube.geometry.dispose();
+    cube.geometry = new THREE.BoxGeometry(s.width, s.height, s.depth);
+  });
+cubeSizeUI.add(guiProperties.cube.size, 'depth')
+  .min(0.1)
+  .max(5)
+  .step(0.1)
+  .onChange(() => {
+    const s = guiProperties.cube.size;
+    cube.geometry.dispose();
+    cube.geometry = new THREE.BoxGeometry(s.width, s.height, s.depth);
   });
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });

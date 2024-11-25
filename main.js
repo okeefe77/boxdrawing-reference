@@ -86,6 +86,7 @@ const guiProperties = {
 
   },
   cube: {
+    scale: 1,
     rotation: {
       x: 0,
       y: 0,
@@ -203,6 +204,17 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'z')
 cubeRotationUI.add(guiProperties.cube.rotation, "reset");
 
 const cubeSizeUI = cubeUI.addFolder('Size');
+cubeSizeUI.add(guiProperties.cube, "scale")
+  .min(0)
+  .max(5)
+  .step(0.025)
+  .onChange(() => {
+    const s = guiProperties.cube.scale;
+    cube.scale.x = s;
+    cube.scale.y = s;
+    cube.scale.z = s;
+  });
+
 cubeSizeUI.add(guiProperties.cube.size, 'width')
   .min(0.1)
   .max(5)

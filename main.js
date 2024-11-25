@@ -73,11 +73,13 @@ const cubeUI = gui.addFolder("Cube");
 const guiProperties = {
   camera: {
     focalLength: camera.getFocalLength(),
+    perspective: 0,
     reset: () => {
       camera.position.z = 3;
       camera.position.y = 0;
       camera.fov = 75;
       camera.zoom = 1;
+      guiProperties.camera.focalLength = camera.getFocalLength();
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
     }
@@ -130,11 +132,23 @@ camUILens.add(camera, 'fov')
   .listen();
 
 camUILens.add(camera, 'zoom')
-  .min(1)
-  .max(50)
-  .step(1)
+  .min(0)
+  .max(15)
+  .step(0.1)
   .onChange(() => camera.updateProjectionMatrix())
   .listen();
+
+camUILens.add(guiProperties.camera, "perspective")
+  .name("Perspective Reduction")
+  .min(0)
+  .max(100)
+  .step(1)
+  .onChange(() => {
+    const p = guiProperties.camera.perspective / 100;
+    camera.zoom = 1 + (p * 8);
+    camera.position.z = 3 + (p * 17);
+    camera.updateProjectionMatrix();
+  })
 
 cameraUI.add(guiProperties.camera, 'reset')
 
@@ -146,7 +160,8 @@ camUIPosition.add(camera.position, 'y')
 camUIPosition.add(camera.position, 'z')
   .min(0)
   .max(30)
-  .step(0.05);
+  .step(0.05)
+  .listen();
 
 
 cubeUI.add(axes, 'visible').name("Show Axes");

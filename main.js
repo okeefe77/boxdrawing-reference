@@ -6,10 +6,14 @@ import outlineFragment from './src/shaders/outline.fragment.glsl?raw';
 
 const rads = degrees => (degrees / 360) * (Math.PI * 2);
 
+const displayElement = document.getElementById('display');
+const controlsElement = document.getElementById('controls');
+const initialSize = Math.floor(window.innerWidth * 0.75);
+
 
 const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
+  width: initialSize,
+  height: initialSize
 }
 
 const scene = new THREE.Scene();
@@ -70,7 +74,7 @@ scene.add(cube);
 
 axes.visible = false;
 
-const gui = new GUI();
+const gui = new GUI({ container: controlsElement });
 const cameraUI = gui.addFolder("Camera");
 const cubeUI = gui.addFolder("Cube");
 
@@ -309,22 +313,28 @@ cubeSizeUI.add(guiProperties.cube.size, "reset").name("Reset Cube Size");
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(sizes.width, sizes.height);
-document.body.appendChild(renderer.domElement);
+displayElement.appendChild(renderer.domElement);
 
 const render = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
 
-window.addEventListener('resize', () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
+const resize = () => {
+  let newSize = Math.floor(window.innerWidth - controlsElement.offsetWidth);
+  newSize = newSize < window.innerHeight ? newSize : window.innerHeight;
+  const guiHeight = document.querySelector('.lil-gui.root').offsetHeight;
+  sizes.width = newSize;
+  sizes.height = newSize < guiHeight ? guiHeight : newSize;
 
   camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
 
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-})
+}
 
+window.addEventListener('resize', resize)
+
+resize();
 render();

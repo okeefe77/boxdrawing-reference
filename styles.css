@@ -1,5 +1,17 @@
 html,
-body {
+body,
+#container,
+#display,
+#controls {
     margin: 0;
     body: 0;
+}
+
+#container {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#controls {
+    background: #1f1f1f;
 }

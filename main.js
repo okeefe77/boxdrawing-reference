@@ -13,7 +13,7 @@ const sizes = {
 }
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x404040);
+scene.background = new THREE.Color(0x62b8f5);
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.z = 3;
@@ -39,6 +39,10 @@ const outlineMaterial = new THREE.ShaderMaterial({
 });
 const box = new THREE.Mesh(cubeGeometry, outlineMaterial);
 scene.add(box);
+
+const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 64);
+const cylinder = new THREE.Mesh(cylinderGeometry, outlineMaterial);
+// scene.add(cylinder);
 
 const axes = new THREE.Group();
 
@@ -74,6 +78,10 @@ const guiProperties = {
   camera: {
     focalLength: camera.getFocalLength(),
     perspective: 0,
+    lookAngle: 0,
+    lookAt: () => {
+      camera.lookAt(cube.position);
+    },
     reset: () => {
       camera.position.z = 3;
       camera.position.y = 0;
@@ -81,6 +89,8 @@ const guiProperties = {
       camera.zoom = 1;
       guiProperties.camera.focalLength = camera.getFocalLength();
       camera.lookAt(0, 0, 0);
+      guiProperties.camera.lookAngle = 0;
+      guiProperties.camera.perspective = 0;
       camera.updateProjectionMatrix();
     }
 
@@ -103,7 +113,21 @@ const guiProperties = {
     size: {
       width: 1,
       height: 1,
-      depth: 1
+      depth: 1,
+      reset: () => {
+        const cs = cube.scale;
+        cs.x = 1;
+        cs.y = 1;
+        cs.z = 1;
+
+        box.geometry.dispose();
+        box.geometry = new THREE.BoxGeometry(1, 1, 1);
+
+        const gcs = guiProperties.cube.size;
+        gcs.x = 1;
+        gcs.y = 1;
+        gcs.z = 1;
+      }
     }
   },
   axes: {
@@ -115,7 +139,8 @@ const guiProperties = {
   }
 }
 
-const camUILens = cameraUI.addFolder('Lens');
+// const camUILens = cameraUI.addFolder('Lens');
+/*
 camUILens.add(guiProperties.camera, 'focalLength')
   .min(0)
   .max(40)
@@ -138,8 +163,25 @@ camUILens.add(camera, 'zoom')
   .step(0.1)
   .onChange(() => camera.updateProjectionMatrix())
   .listen();
+*/
+// const camUIPosition = cameraUI.addFolder('Position')
+cameraUI.add(camera.position, 'y')
+  .name("Height")
+  .min(-15)
+  .max(15)
+  .step(0.05)
+  .listen();
 
-camUILens.add(guiProperties.camera, "perspective")
+cameraUI.add(guiProperties.camera, "lookAngle")
+  .name("Look")
+  .min(-60)
+  .max(60)
+  .step(0.5)
+  .onChange(() => {
+    camera.rotation.x = rads(guiProperties.camera.lookAngle);
+  }).listen();
+
+cameraUI.add(guiProperties.camera, "perspective")
   .name("Perspective Reduction")
   .min(0)
   .max(100)
@@ -149,22 +191,26 @@ camUILens.add(guiProperties.camera, "perspective")
     camera.zoom = 1 + (p * 8);
     camera.position.z = 3 + (p * 17);
     camera.updateProjectionMatrix();
-  })
+  }).listen();
 
-cameraUI.add(guiProperties.camera, 'reset')
 
-const camUIPosition = cameraUI.addFolder('Position')
-camUIPosition.add(camera.position, 'y')
-  .min(-15)
-  .max(15)
-  .step(0.05);
+
+cameraUI.add(guiProperties.camera, "lookAt").name("Look at Cube");
+/*
 camUIPosition.add(camera.position, 'z')
   .min(0)
   .max(30)
   .step(0.05)
   .listen();
+*/
+
+cameraUI.add(guiProperties.camera, 'reset').name("Reset Camera");
 
 
+
+// cube.visible = false;
+
+// cubeUI.add(cube, 'visible').name("Show Cube");
 cubeUI.add(axes, 'visible').name("Show Axes");
 
 
@@ -172,6 +218,7 @@ const order = new RotationOrder();
 
 const cubeRotationUI = cubeUI.addFolder("Rotation");
 cubeRotationUI.add(guiProperties.cube.rotation, 'x')
+  .name("X Axis (Red)")
   .min(-180)
   .max(180)
   .step(5)
@@ -182,6 +229,7 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'x')
   }).listen();
 
 cubeRotationUI.add(guiProperties.cube.rotation, 'y')
+  .name("Y Axis (Green)")
   .min(-180)
   .max(180)
   .step(5)
@@ -192,6 +240,7 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'y')
   }).listen();
 
 cubeRotationUI.add(guiProperties.cube.rotation, 'z')
+  .name("Z Axis (Blue)")
   .min(-180)
   .max(180)
   .step(5)
@@ -201,10 +250,11 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'z')
     cube.rotation.z = rads(guiProperties.cube.rotation.z)
   }).listen();
 
-cubeRotationUI.add(guiProperties.cube.rotation, "reset");
+cubeRotationUI.add(guiProperties.cube.rotation, "reset").name("Reset Cube Rotation");
 
 const cubeSizeUI = cubeUI.addFolder('Size');
 cubeSizeUI.add(guiProperties.cube, "scale")
+  .name("Scale")
   .min(0)
   .max(5)
   .step(0.025)
@@ -216,6 +266,7 @@ cubeSizeUI.add(guiProperties.cube, "scale")
   });
 
 cubeSizeUI.add(guiProperties.cube.size, 'width')
+  .name("Width (Red)")
   .min(0.1)
   .max(5)
   .step(0.1)
@@ -228,6 +279,7 @@ cubeSizeUI.add(guiProperties.cube.size, 'width')
     xAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.width + 2);
   });
 cubeSizeUI.add(guiProperties.cube.size, 'height')
+  .name("Height (Green)")
   .min(0.1)
   .max(5)
   .step(0.1)
@@ -240,6 +292,7 @@ cubeSizeUI.add(guiProperties.cube.size, 'height')
     yAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.height + 2);
   });
 cubeSizeUI.add(guiProperties.cube.size, 'depth')
+  .name("Depth (Blue)")
   .min(0.1)
   .max(5)
   .step(0.1)
@@ -251,6 +304,8 @@ cubeSizeUI.add(guiProperties.cube.size, 'depth')
     zAxisCylinder.geometry.dispose();
     zAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.depth + 2);
   });
+
+cubeSizeUI.add(guiProperties.cube.size, "reset").name("Reset Cube Size");
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(sizes.width, sizes.height);

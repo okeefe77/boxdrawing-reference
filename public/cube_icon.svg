@@ -8,8 +8,6 @@
 
       .cls-1, .cls-2 {
         fill: #3b3b57;
-        <!-- stroke: #f90; -->
-        <!-- stroke: #a2b5eb; -->
         stroke: #9595c4;
         stroke-miterlimit: 10;
       }

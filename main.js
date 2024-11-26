@@ -82,12 +82,7 @@ const cubeUI = gui.addFolder("Box");
 
 const guiProperties = {
   camera: {
-    focalLength: camera.getFocalLength(),
     perspective: 0,
-    lookAngle: 0,
-    lookAt: () => {
-      camera.lookAt(cube.position);
-    },
     reset: () => {
       camera.position.z = 3;
       camera.position.y = 0;
@@ -138,60 +133,15 @@ const guiProperties = {
         depth.setValue(1);
       }
     }
-  },
-  axes: {
-    height: {
-      x: 2,
-      y: 2,
-      z: 2
-    }
   }
 }
 
-
-// const camUILens = cameraUI.addFolder('Lens');
-/*
-camUILens.add(guiProperties.camera, 'focalLength')
-  .min(0)
-  .max(40)
-  .step(0.1)
-  .onChange(() => {
-    camera.setFocalLength(guiProperties.camera.focalLength);
-    camera.updateProjectionMatrix();
-  }).listen();
-
-camUILens.add(camera, 'fov')
-  .min(10)
-  .max(200)
-  .step(5)
-  .onChange(() => camera.updateProjectionMatrix())
-  .listen();
-
-camUILens.add(camera, 'zoom')
-  .min(0)
-  .max(15)
-  .step(0.1)
-  .onChange(() => camera.updateProjectionMatrix())
-  .listen();
-*/
-// const camUIPosition = cameraUI.addFolder('Position')
 cameraUI.add(camera.position, 'y')
   .name("Eye Level")
   .min(-15)
   .max(15)
   .step(0.05)
   .listen();
-
-/*
-cameraUI.add(guiProperties.camera, "lookAngle")
-  .name("Look")
-  .min(-60)
-  .max(60)
-  .step(0.5)
-  .onChange(() => {
-    camera.rotation.x = rads(guiProperties.camera.lookAngle);
-  }).listen();
-*/
 
 const perspective = cameraUI.add(guiProperties.camera, "perspective")
   .name("Perspective Reduction")
@@ -205,24 +155,8 @@ const perspective = cameraUI.add(guiProperties.camera, "perspective")
     camera.updateProjectionMatrix();
   }).listen();
 
-
-
-// cameraUI.add(guiProperties.camera, "lookAt").name("Look at Box");
-/*
-camUIPosition.add(camera.position, 'z')
-  .min(0)
-  .max(30)
-  .step(0.05)
-  .listen();
-*/
-
 cameraUI.add(guiProperties.camera, 'reset').name("Reset Camera");
 
-
-
-// cube.visible = false;
-
-// cubeUI.add(cube, 'visible').name("Show Cube");
 cubeUI.add(axes, 'visible').name("Show Axes");
 
 

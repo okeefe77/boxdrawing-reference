@@ -207,7 +207,7 @@ const perspective = cameraUI.add(guiProperties.camera, "perspective")
 
 
 
-cameraUI.add(guiProperties.camera, "lookAt").name("Look at Box");
+// cameraUI.add(guiProperties.camera, "lookAt").name("Look at Box");
 /*
 camUIPosition.add(camera.position, 'z')
   .min(0)

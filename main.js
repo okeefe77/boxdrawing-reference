@@ -17,7 +17,7 @@ const sizes = {
 }
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x62b8f5);
+scene.background = new THREE.Color(0xa2b5eb);
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.z = 3;
@@ -76,7 +76,7 @@ axes.visible = false;
 
 const gui = new GUI({ container: controlsElement });
 const cameraUI = gui.addFolder("Camera");
-const cubeUI = gui.addFolder("Cube");
+const cubeUI = gui.addFolder("Box");
 
 const guiProperties = {
   camera: {
@@ -106,9 +106,10 @@ const guiProperties = {
       y: 0,
       z: 0,
       reset: () => {
-        guiProperties.cube.rotation.x = 0;
-        guiProperties.cube.rotation.y = 0;
-        guiProperties.cube.rotation.z = 0;
+        boxX.setValue(0);
+        boxY.setValue(0);
+        boxZ.setValue(0);
+
         cube.rotation.x = 0;
         cube.rotation.y = 0;
         cube.rotation.z = 0;
@@ -119,18 +120,10 @@ const guiProperties = {
       height: 1,
       depth: 1,
       reset: () => {
-        const cs = cube.scale;
-        cs.x = 1;
-        cs.y = 1;
-        cs.z = 1;
-
-        box.geometry.dispose();
-        box.geometry = new THREE.BoxGeometry(1, 1, 1);
-
-        const gcs = guiProperties.cube.size;
-        gcs.x = 1;
-        gcs.y = 1;
-        gcs.z = 1;
+        scale.setValue(1);
+        width.setValue(1);
+        height.setValue(1);
+        depth.setValue(1);
       }
     }
   },
@@ -185,7 +178,7 @@ cameraUI.add(guiProperties.camera, "lookAngle")
     camera.rotation.x = rads(guiProperties.camera.lookAngle);
   }).listen();
 
-cameraUI.add(guiProperties.camera, "perspective")
+const perspective = cameraUI.add(guiProperties.camera, "perspective")
   .name("Perspective Reduction")
   .min(0)
   .max(100)
@@ -199,7 +192,7 @@ cameraUI.add(guiProperties.camera, "perspective")
 
 
 
-cameraUI.add(guiProperties.camera, "lookAt").name("Look at Cube");
+cameraUI.add(guiProperties.camera, "lookAt").name("Look at Box");
 /*
 camUIPosition.add(camera.position, 'z')
   .min(0)
@@ -221,7 +214,7 @@ cubeUI.add(axes, 'visible').name("Show Axes");
 const order = new RotationOrder();
 
 const cubeRotationUI = cubeUI.addFolder("Rotation");
-cubeRotationUI.add(guiProperties.cube.rotation, 'x')
+const boxX = cubeRotationUI.add(guiProperties.cube.rotation, 'x')
   .name("X Axis (Red)")
   .min(-180)
   .max(180)
@@ -232,7 +225,7 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'x')
     cube.rotation.x = rads(guiProperties.cube.rotation.x);
   }).listen();
 
-cubeRotationUI.add(guiProperties.cube.rotation, 'y')
+const boxY = cubeRotationUI.add(guiProperties.cube.rotation, 'y')
   .name("Y Axis (Green)")
   .min(-180)
   .max(180)
@@ -243,7 +236,7 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'y')
     cube.rotation.y = rads(guiProperties.cube.rotation.y);
   }).listen();
 
-cubeRotationUI.add(guiProperties.cube.rotation, 'z')
+const boxZ = cubeRotationUI.add(guiProperties.cube.rotation, 'z')
   .name("Z Axis (Blue)")
   .min(-180)
   .max(180)
@@ -254,10 +247,10 @@ cubeRotationUI.add(guiProperties.cube.rotation, 'z')
     cube.rotation.z = rads(guiProperties.cube.rotation.z)
   }).listen();
 
-cubeRotationUI.add(guiProperties.cube.rotation, "reset").name("Reset Cube Rotation");
+cubeRotationUI.add(guiProperties.cube.rotation, "reset").name("Reset Box Rotation");
 
 const cubeSizeUI = cubeUI.addFolder('Size');
-cubeSizeUI.add(guiProperties.cube, "scale")
+const scale = cubeSizeUI.add(guiProperties.cube, "scale")
   .name("Scale")
   .min(0)
   .max(5)
@@ -269,7 +262,7 @@ cubeSizeUI.add(guiProperties.cube, "scale")
     cube.scale.z = s;
   });
 
-cubeSizeUI.add(guiProperties.cube.size, 'width')
+const width = cubeSizeUI.add(guiProperties.cube.size, 'width')
   .name("Width (Red)")
   .min(0.1)
   .max(5)
@@ -282,7 +275,7 @@ cubeSizeUI.add(guiProperties.cube.size, 'width')
     xAxisCylinder.geometry.dispose();
     xAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.width + 2);
   });
-cubeSizeUI.add(guiProperties.cube.size, 'height')
+const height = cubeSizeUI.add(guiProperties.cube.size, 'height')
   .name("Height (Green)")
   .min(0.1)
   .max(5)
@@ -295,7 +288,7 @@ cubeSizeUI.add(guiProperties.cube.size, 'height')
     yAxisCylinder.geometry.dispose();
     yAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.height + 2);
   });
-cubeSizeUI.add(guiProperties.cube.size, 'depth')
+const depth = cubeSizeUI.add(guiProperties.cube.size, 'depth')
   .name("Depth (Blue)")
   .min(0.1)
   .max(5)
@@ -309,7 +302,7 @@ cubeSizeUI.add(guiProperties.cube.size, 'depth')
     zAxisCylinder.geometry = new THREE.CylinderGeometry(0.025, 0.025, s.depth + 2);
   });
 
-cubeSizeUI.add(guiProperties.cube.size, "reset").name("Reset Cube Size");
+cubeSizeUI.add(guiProperties.cube.size, "reset").name("Reset Box Size");
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(sizes.width, sizes.height);
@@ -321,11 +314,13 @@ const render = () => {
 }
 
 const resize = () => {
-  let newSize = Math.floor(window.innerWidth - controlsElement.offsetWidth);
-  newSize = newSize < window.innerHeight ? newSize : window.innerHeight;
+  const newWidth = Math.floor(window.innerWidth - controlsElement.offsetWidth);
   const guiHeight = document.querySelector('.lil-gui.root').offsetHeight;
-  sizes.width = newSize;
-  sizes.height = newSize < guiHeight ? guiHeight : newSize;
+  const winHeight = window.innerHeight - document.querySelector('header').offsetHeight;
+  const newHeight = Math.max(winHeight, guiHeight);
+
+  sizes.width = newWidth;
+  sizes.height = newHeight;
 
   camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
@@ -335,6 +330,10 @@ const resize = () => {
 }
 
 window.addEventListener('resize', resize)
+
+boxX.setValue(35);
+boxY.setValue(45);
+perspective.setValue(10);
 
 resize();
 render();

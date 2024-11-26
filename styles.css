@@ -1,10 +1,42 @@
-html,
-body,
-#container,
-#display,
-#controls {
+* {
+    box-sizing: border-box;
     margin: 0;
     body: 0;
+}
+
+body {
+    overflow: hidden;
+    color: #e9e9e9;
+    background-color: #28283F;
+    font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+}
+
+header {
+    padding: 2rem;
+    border-bottom: 2px solid #3b3b57;
+    overflow: hidden;
+    display: flex;
+}
+
+header img {
+    height: 7.75rem;
+    margin-right: 1.5rem;
+}
+
+header div h1 {
+    padding-top: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+    /* color: #a2b5eb; */
+    color: #ff9900;
+}
+
+header div p {
+    margin-top: 0;
+    line-height: 1.5;
+    /* color: #ffbb55; */
+    font-size: 0.8rem;
+    max-width: 80ch;
 }
 
 #container {
@@ -13,5 +45,19 @@ body,
 }
 
 #controls {
-    background: #1f1f1f;
+    background: #28283F;
+}
+
+.lil-gui {
+    --background-color: #28283F;
+    --title-background-color: #28283F;
+    --text-color: #e9e9e9;
+    --title-text-color: #e9e9e9;
+    --number-color: #ff9900;
+    --string-color: #ff9900;
+    --widget-color: #3b3b57;
+    --hover-color: #4c4c6b;
+    --focus-color: #575778;
+    --font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+    --width: 275px;
 }

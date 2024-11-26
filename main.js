@@ -5,6 +5,8 @@ import outlineVertex from './src/shaders/outline.vertex.glsl?raw';
 import outlineFragment from './src/shaders/outline.fragment.glsl?raw';
 
 const rads = degrees => (degrees / 360) * (Math.PI * 2);
+const randomAngle = () => Math.floor((Math.random() * 140) - 70);
+const randomDimension = () => (Math.random() * 2.5) + 0.25;
 
 const displayElement = document.getElementById('display');
 const controlsElement = document.getElementById('controls');
@@ -105,6 +107,11 @@ const guiProperties = {
       x: 0,
       y: 0,
       z: 0,
+      random: () => {
+        boxX.setValue(randomAngle());
+        boxY.setValue(randomAngle());
+        boxZ.setValue(randomAngle());
+      },
       reset: () => {
         boxX.setValue(0);
         boxY.setValue(0);
@@ -119,6 +126,11 @@ const guiProperties = {
       width: 1,
       height: 1,
       depth: 1,
+      random: () => {
+        width.setValue(randomDimension());
+        height.setValue(randomDimension());
+        depth.setValue(randomDimension());
+      },
       reset: () => {
         scale.setValue(1);
         width.setValue(1);
@@ -135,6 +147,7 @@ const guiProperties = {
     }
   }
 }
+
 
 // const camUILens = cameraUI.addFolder('Lens');
 /*
@@ -163,12 +176,13 @@ camUILens.add(camera, 'zoom')
 */
 // const camUIPosition = cameraUI.addFolder('Position')
 cameraUI.add(camera.position, 'y')
-  .name("Height")
+  .name("Eye Level")
   .min(-15)
   .max(15)
   .step(0.05)
   .listen();
 
+/*
 cameraUI.add(guiProperties.camera, "lookAngle")
   .name("Look")
   .min(-60)
@@ -177,6 +191,7 @@ cameraUI.add(guiProperties.camera, "lookAngle")
   .onChange(() => {
     camera.rotation.x = rads(guiProperties.camera.lookAngle);
   }).listen();
+*/
 
 const perspective = cameraUI.add(guiProperties.camera, "perspective")
   .name("Perspective Reduction")
@@ -248,6 +263,7 @@ const boxZ = cubeRotationUI.add(guiProperties.cube.rotation, 'z')
   }).listen();
 
 cubeRotationUI.add(guiProperties.cube.rotation, "reset").name("Reset Box Rotation");
+cubeRotationUI.add(guiProperties.cube.rotation, 'random').name("Randomize Box Rotation");
 
 const cubeSizeUI = cubeUI.addFolder('Size');
 const scale = cubeSizeUI.add(guiProperties.cube, "scale")
@@ -303,6 +319,7 @@ const depth = cubeSizeUI.add(guiProperties.cube.size, 'depth')
   });
 
 cubeSizeUI.add(guiProperties.cube.size, "reset").name("Reset Box Size");
+cubeSizeUI.add(guiProperties.cube.size, "random").name("Randomize Box Size");
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(sizes.width, sizes.height);

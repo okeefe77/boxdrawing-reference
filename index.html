@@ -9,17 +9,22 @@
 </head>
 
 <body>
-  <header>
-    <img src="/cube_icon.svg" alt="an icon of a cube">
+  <dialog id="intro">
+    <button id="close-dialog-btn"><img src="/close_button.svg" alt="close icon"></button>
     <div>
+      <img class="icon" src="/cube_icon.svg" alt="an icon of a cube">
       <h1>Box Drawing Reference</h1>
-      <p>Drawing boxes is a powerful exercise for artistic growth. It helps you understand perspective, improves
-        hand-eye coordination, and builds a strong foundation for more complex drawings. Use the controls to shape and
-        pose the box. Challenge yourself by drawing it from difficult angles.</p>
     </div>
-  </header>
+    <p>Drawing boxes is a powerful exercise for artistic growth. It helps you understand perspective, improves
+      hand-eye coordination, and builds a strong foundation for more complex drawings. Use the controls to shape
+      and
+      pose the box. Challenge yourself by drawing it from difficult angles.</p>
+    <button id="close-info-box-btn">Close this dialog to get started</button>
+  </dialog>
+  <button id="info-btn"><img id="info-icon" src="info_icon.svg" alt="info icon"></button>
   <div id="container">
-    <div id="display"></div>
+    <div id="display">
+    </div>
     <div id="controls"></div>
   </div>
   <script type="module" src="/main.js"></script>

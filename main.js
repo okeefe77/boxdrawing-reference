@@ -4,6 +4,40 @@ import RotationOrder from './src/RotationOrder.js';
 import outlineVertex from './src/shaders/outline.vertex.glsl?raw';
 import outlineFragment from './src/shaders/outline.fragment.glsl?raw';
 
+const introDialog = document.getElementById('intro');
+const closeDialogBtn = document.getElementById('close-info-box-btn');
+const infoBtn = document.getElementById('info-btn');
+
+const closeDialog = () => {
+  localStorage?.setItem("DontShowIntroDialog", "true");
+  introDialog.close();
+}
+
+const positionDialog = () => {
+  const display = document.getElementById('display');
+  const displayCtrH = Math.floor(display.offsetHeight / 2);
+  const displayCtrW = Math.floor(display.offsetWidth / 2);
+
+  const top = Math.floor(displayCtrH - (introDialog.offsetHeight / 2));
+  const left = Math.floor(displayCtrW - (introDialog.offsetWidth / 2));
+
+  introDialog.style.top = top + "px";
+  introDialog.style.left = left + "px";
+}
+
+const showDialog = e => {
+  if (localStorage?.getItem("DontShowIntroDialog") !== "true" || e.target.id === "info-icon") {
+    introDialog.showModal();
+    positionDialog();
+  }
+  closeDialogBtn.focus = false;
+}
+
+window.addEventListener("load", showDialog);
+infoBtn.addEventListener("click", showDialog);
+closeDialogBtn.addEventListener("click", closeDialog);
+
+
 const rads = degrees => (degrees / 360) * (Math.PI * 2);
 const randomAngle = () => Math.floor((Math.random() * 140) - 70);
 const randomDimension = () => (Math.random() * 2.5) + 0.25;
@@ -46,12 +80,7 @@ const outlineMaterial = new THREE.ShaderMaterial({
 const box = new THREE.Mesh(cubeGeometry, outlineMaterial);
 scene.add(box);
 
-const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 64);
-const cylinder = new THREE.Mesh(cylinderGeometry, outlineMaterial);
-// scene.add(cylinder);
-
 const axes = new THREE.Group();
-
 const xAxisGeometry = new THREE.CylinderGeometry(0.025, 0.025, 3);
 const xAxisMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
 const xAxisCylinder = new THREE.Mesh(xAxisGeometry, xAxisMaterial);
@@ -267,7 +296,7 @@ const render = () => {
 const resize = () => {
   const newWidth = Math.floor(window.innerWidth - controlsElement.offsetWidth);
   const guiHeight = document.querySelector('.lil-gui.root').offsetHeight;
-  const winHeight = window.innerHeight - document.querySelector('header').offsetHeight;
+  const winHeight = window.innerHeight;
   const newHeight = Math.max(winHeight, guiHeight);
 
   sizes.width = newWidth;

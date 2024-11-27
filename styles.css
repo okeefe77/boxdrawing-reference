@@ -5,36 +5,105 @@
 }
 
 body {
-    overflow: hidden;
+    overflow-x: hidden;
     color: #e9e9e9;
     background-color: #28283F;
     font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
 }
 
-header {
-    padding: 2rem;
-    border-bottom: 2px solid #3b3b57;
-    overflow: hidden;
-    display: flex;
+button {
+    cursor: pointer;
 }
 
-header img {
-    height: 7.75rem;
+#display {
+    display: relative;
+}
+
+#info-btn {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: none;
+    min-width: fit-content;
+}
+
+#info-btn img {
+    width: 1.5rem;
+}
+
+dialog[open] {
+    padding: 2rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #28283F;
+    color: #e9e9e9;
+    border: none;
+    border-radius: 0.5rem;
+    width: 25rem;
+    visibility: none;
+}
+
+dialog[open]::backdrop {
+    backdrop-filter: blur(2px);
+}
+
+dialog button#close-dialog-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.7rem;
+    min-width: fit-content;
+    background: none;
+    border: none;
+    display: none;
+}
+
+button:focus,
+button:active {
+    border: none;
+}
+
+dialog[open] button#close-dialog-btn img {
+    width: 1.2rem;
+}
+
+dialog[open] img.icon {
+    height: 5rem;
+    margin-left: 0.5rem;
     margin-right: 1.5rem;
 }
 
-header div h1 {
-    padding-top: 0.5rem;
-    font-size: 2.5rem;
+dialog[open] div {
+    display: flex;
+    margin-bottom: 0.75rem;
+}
+
+dialog[open] div h1 {
+    padding-top: 0.2rem;
+    font-size: 2rem;
     margin-bottom: 0.25rem;
     color: #ff9900;
 }
 
-header div p {
+dialog[open] p {
     margin-top: 0;
+    margin-bottom: 1.2rem;
     line-height: 1.5;
     font-size: 0.8rem;
     max-width: 80ch;
+}
+
+dialog[open] #close-info-box-btn {
+    background: none;
+    color: #ff9900;
+    border: 2px solid #ff9900;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.6rem 1rem 0.5rem;
+    border-radius: 0.25rem;
 }
 
 #container {

@@ -58,6 +58,13 @@ scene.background = new THREE.Color(0xa2b5eb);
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.z = 3;
 
+const cameraPivot = new THREE.Object3D();
+cameraPivot.position.set(0, 0, 0);
+cameraPivot.rotation.set(0, 0, 0);
+scene.add(cameraPivot);
+
+cameraPivot.attach(camera);
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
@@ -113,17 +120,19 @@ const guiProperties = {
   camera: {
     perspective: 0,
     reset: () => {
+      // cameraPivot.rotation.set(0, 0, 0);
+      pivotCameraH.setValue(0);
+      pivotCameraV.setValue(0);
       camera.position.z = 3;
       camera.position.y = 0;
-      camera.fov = 75;
-      camera.zoom = 1;
-      guiProperties.camera.focalLength = camera.getFocalLength();
+      // camera.fov = 75;
+      // camera.zoom = 1;
       camera.lookAt(0, 0, 0);
-      guiProperties.camera.lookAngle = 0;
-      guiProperties.camera.perspective = 0;
-      camera.updateProjectionMatrix();
-    }
-
+      // perspective.setValue(10);
+      // camera.updateProjectionMatrix();
+    },
+    pivotH: 0,
+    pivotV: 0
   },
   cube: {
     scale: 1,
@@ -165,12 +174,36 @@ const guiProperties = {
   }
 }
 
+/*
 cameraUI.add(camera.position, 'y')
   .name("Eye Level")
   .min(-15)
   .max(15)
   .step(0.05)
   .listen();
+*/
+const cameraOrder = new RotationOrder();
+const pivotCameraH = cameraUI.add(guiProperties.camera, "pivotH")
+  .name("Pivot Horiz")
+  .min(-180)
+  .max(180)
+  .step(1)
+  .onChange(value => {
+    cameraOrder.push("Y");
+    cameraPivot.rotation.reorder(cameraOrder.get());
+    cameraPivot.rotation.y = rads(value);
+  }).listen();
+
+const pivotCameraV = cameraUI.add(guiProperties.camera, "pivotV")
+  .name("Pivot Vert")
+  .min(-90)
+  .max(90)
+  .step(1)
+  .onChange(value => {
+    cameraOrder.push("X");
+    cameraPivot.rotation.reorder(cameraOrder.get());
+    cameraPivot.rotation.x = rads(value);
+  }).listen();
 
 const perspective = cameraUI.add(guiProperties.camera, "perspective")
   .name("Perspective Reduction")

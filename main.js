@@ -120,16 +120,10 @@ const guiProperties = {
   camera: {
     perspective: 0,
     reset: () => {
-      // cameraPivot.rotation.set(0, 0, 0);
+      cameraPivot.rotation.set(0, 0, 0);
       pivotCameraH.setValue(0);
       pivotCameraV.setValue(0);
-      camera.position.z = 3;
-      camera.position.y = 0;
-      // camera.fov = 75;
-      // camera.zoom = 1;
-      camera.lookAt(0, 0, 0);
-      // perspective.setValue(10);
-      // camera.updateProjectionMatrix();
+      perspective.setValue(10);
     },
     pivotH: 0,
     pivotV: 0
@@ -184,7 +178,7 @@ cameraUI.add(camera.position, 'y')
 */
 const cameraOrder = new RotationOrder();
 const pivotCameraH = cameraUI.add(guiProperties.camera, "pivotH")
-  .name("Pivot Horiz")
+  .name("Pan Around Horizontal")
   .min(-180)
   .max(180)
   .step(1)
@@ -195,7 +189,7 @@ const pivotCameraH = cameraUI.add(guiProperties.camera, "pivotH")
   }).listen();
 
 const pivotCameraV = cameraUI.add(guiProperties.camera, "pivotV")
-  .name("Pivot Vert")
+  .name("Pan Around Vertical")
   .min(-90)
   .max(90)
   .step(1)
